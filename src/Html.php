@@ -5597,6 +5597,7 @@ HTML;
         if (!$p['only_uploaded_files']) {
            // manage file upload without tinymce editor
             $display .= "<span class='b'>" . __('Drag and drop your file here, or') . '</span><br>';
+            
         }
         $display .= "<input id='fileupload{$p['rand']}' type='file' name='_uploader_" . $p['name'] . "[]'
                       class='form-control'
@@ -5606,6 +5607,9 @@ HTML;
                       data-form-data='{\"name\": \"_uploader_" . $p['name'] . "\", \"showfilesize\": \"" . $p['showfilesize'] . "\"}'"
                       . ($p['multiple'] ? " multiple='multiple'" : "")
                       . ($p['onlyimages'] ? " accept='.gif,.png,.jpg,.jpeg'" : "") . ">";
+
+        $display .= "<span>" . __('Files versioned with dots (e.g., v1.1, v10.0) are not valid.') . '</span><br>';
+       
 
         $progressall_js = '';
         if (!$p['only_uploaded_files']) {

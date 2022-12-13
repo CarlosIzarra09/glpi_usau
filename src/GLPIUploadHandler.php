@@ -157,6 +157,7 @@ class GLPIUploadHandler extends UploadHandler
                         $val->display = str_replace($val->prefix, '', $val->name);
 
                         $count_dots = substr_count($val->display, '.');
+                        
                         //$format = 'Nombre: %s ,Numero de puntos: %d //';
                         //echo sprintf($format, $val->display,$count_dots);
                         if($count_dots > 1){
