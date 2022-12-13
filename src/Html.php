@@ -335,6 +335,8 @@ class Html
             $number = 0;
         } else if ($number == "-") { // used for not defines value (from Infocom::Amort, p.e.)
             return "-";
+        } else if($number < 0){
+            $number = $number * -1;
         }
 
         $number  = doubleval($number);
@@ -2815,10 +2817,10 @@ HTML;
         $p = [
             'value'        => '',
             'defaultDate'  => '',
-            'maybeempty'   => true,
+            'maybeempty'   => false,
             'canedit'      => true,
-            'min'          => '',
-            'max'          => '',
+            'min'          => '1990-01-01',
+            'max'          => date("Y-m-d"),
             'showyear'     => false,
             'display'      => true,
             'range'        => false,
