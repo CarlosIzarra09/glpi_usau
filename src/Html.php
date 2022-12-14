@@ -2830,7 +2830,7 @@ HTML;
             'yearrange'    => '',
             'multiple'     => false,
             'size'         => 10,
-            'required'     => false,
+            'required'     => true,
             'placeholder'  => '',
             'on_change'    => '',
         ];
@@ -2992,17 +2992,17 @@ JS;
 
         $p = [
             'value'      => '',
-            'maybeempty' => true,
+            'maybeempty' => false,
             'canedit'    => true,
-            'mindate'    => '',
-            'maxdate'    => '',
-            'mintime'    => '',
-            'maxtime'    => '',
+            'minDate'    => Date("1990-01-01"),
+            'maxDate'    => 'today',
+            'mintime'    => '00:00:00',
+            'maxtime'    => '23:59:59',
             'timestep'   => -1,
             'showyear'   => true,
             'display'    => true,
             'rand'       => mt_rand(),
-            'required'   => false,
+            'required'   => true,
             'on_change'  => '',
         ];
 
@@ -3062,11 +3062,11 @@ HTML;
 
         $date_format = Toolbox::getDateFormat('js') . " H:i:S";
 
-        $min_attr = !empty($p['min'])
-         ? "minDate: '{$p['min']}',"
+        $min_attr = !empty($p['minDate'])
+         ? "minDate: '{$p['minDate']}',"
          : "";
-        $max_attr = !empty($p['max'])
-         ? "maxDate: '{$p['max']}',"
+        $max_attr = !empty($p['maxDate'])
+         ? "maxDate: '{$p['maxDate']}',"
          : "";
 
         $locale = Locale::parseLocale($_SESSION['glpilanguage']);
@@ -5134,6 +5134,11 @@ JAVASCRIPT
      **/
     public static function input($fieldName, $options = [])
     {
+        if($fieldName == ""){
+            sprintf ("FieldName is mandatory");
+        }
+
+
         $type = 'text';
         if (isset($options['type'])) {
             $type = $options['type'];
