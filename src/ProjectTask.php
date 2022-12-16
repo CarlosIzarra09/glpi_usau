@@ -789,7 +789,7 @@ class ProjectTask extends CommonDBChild implements CalDAVCompatibleItemInterface
         echo "<td>";
         Html::showDateTimeField(
             "plan_start_date",
-            ['value' => $_SESSION['glpi_currenttime'],
+            ['value' => $this->fields['plan_start_date'],
                 'rand'  => $rand_plan_start_date
             ]
         );
