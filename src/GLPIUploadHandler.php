@@ -161,7 +161,9 @@ class GLPIUploadHandler extends UploadHandler
                         //$format = 'Nombre: %s ,Numero de puntos: %d //';
                         //echo sprintf($format, $val->display,$count_dots);
                         if($count_dots > 1){
-                            unlink($upload_dir . $val->name);
+                            if(file_exists($upload_dir . $val->name)){
+                                unlink($upload_dir . $val->name);
+                            }
                             $val->error = __('Filetype not allowed');
                         }else{
 
