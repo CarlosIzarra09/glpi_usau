@@ -47,9 +47,10 @@ if (!isset($_GET["withtemplate"])) {
 }
 
 $budget = new Budget();
+
 if (isset($_POST["add"])) {
     $budget->check(-1, CREATE, $_POST);
-
+    
     if ($newID = $budget->add($_POST)) {
         Event::log(
             $newID,
@@ -61,6 +62,7 @@ if (isset($_POST["add"])) {
         );
         if ($_SESSION['glpibackcreated']) {
             Html::redirect($budget->getLinkURL());
+            //echo sprintf(__('%s'), var_dump($_POST));
         }
     }
     Html::back();
