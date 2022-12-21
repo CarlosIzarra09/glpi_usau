@@ -144,7 +144,8 @@ class Budget extends CommonDropdown
 
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . _x('price', 'Value') . "</td>";
-        echo "<td><input type='text' name='value' size='14'
+        echo "<td><input type='text' name='value' size='14' 
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                  value='" . Html::formatNumber($this->fields["value"], true) . "' class='form-control'></td>";
 
                  echo "<td rowspan='$rowspan' class='middle right'>" . __('Comments') . "</td>";
