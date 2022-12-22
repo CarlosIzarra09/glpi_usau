@@ -1,4 +1,6 @@
 <?php
+use Glpi\Features\CacheableListInterface;
+use Glpi\Plugin\Hooks;
 
 /**
  * ---------------------------------------------------------------------
@@ -36,6 +38,9 @@
 /**
  * Budget class
  */
+
+
+
 class Budget extends CommonDropdown
 {
     use Glpi\Features\Clonable;
@@ -60,6 +65,167 @@ class Budget extends CommonDropdown
         return _n('Budget', 'Budgets', $nb);
     }
 
+    public function add(array $input, $options = [], $history = true)
+    {
+        global $DB, $CFG_GLPI;
+
+        if ($DB->isSlave()) {
+            return false;
+        }
+
+        // This means we are not adding a cloned object
+        if (
+            (!Toolbox::hasTrait($this, \Glpi\Features\Clonable::class) || !isset($input['clone']))
+            && method_exists($this, 'clone')
+        ) {
+            // This means we are asked to clone the object (old way). This will clone the clone method
+            // that will set the clone parameter to true
+            if (isset($input['_oldID'])) {
+                $id_to_clone = $input['_oldID'];
+            }
+            if (isset($input['id'])) {
+                $id_to_clone = $input['id'];
+            }
+            if (isset($id_to_clone) && $this->getFromDB($id_to_clone)) {
+                if ($clone_id = $this->clone($input, $history)) {
+                    $this->getFromDB($clone_id); // Load created items fields
+                }
+                return $clone_id;
+            }
+        }
+
+        // Store input in the object to be available in all sub-method / hook
+        $this->input = $input;
+
+        // Manage the _no_history
+        if (!isset($this->input['_no_history'])) {
+            $this->input['_no_history'] = !$history;
+        }
+
+        if (isset($this->input['add'])) {
+            // Input from the interface
+            // Save this data to be available if add fail
+            $this->saveInput();
+        }
+
+        if (isset($this->input['add'])) {
+            $this->input['_add'] = $this->input['add'];
+            unset($this->input['add']);
+        }
+
+        // Call the plugin hook - $this->input can be altered
+        // This hook get the data from the form, not yet altered
+        Plugin::doHook(Hooks::PRE_ITEM_ADD, $this);
+
+        if ($this->input && is_array($this->input)) {
+            $this->input = $this->prepareInputForAdd($this->input);
+        }
+
+        if ($this->input && is_array($this->input)) {
+            // Call the plugin hook - $this->input can be altered
+            // This hook get the data altered by the object method
+            Plugin::doHook(Hooks::POST_PREPAREADD, $this);
+        }
+
+        if ($this->input && is_array($this->input)) {
+           //Check values to inject
+            $this->filterValues(!isCommandLine());
+        }
+
+        //Process business rules for assets
+        $this->assetBusinessRules(\RuleAsset::ONADD);
+
+        if ($this->input && is_array($this->input)) {
+            $this->fields = [];
+            $table_fields = $DB->listFields($this->getTable());
+
+            $this->pre_addInDB();
+
+            // fill array for add
+            $this->cleanLockedsOnAdd();
+            foreach (array_keys($this->input) as $key) {
+                if (
+                    ($key[0] != '_')
+                    && isset($table_fields[$key])
+                ) {
+                    $this->fields[$key] = $this->input[$key];
+                }
+            }
+
+            // Auto set date_creation if exsist
+            if (isset($table_fields['date_creation']) && !isset($this->input['date_creation'])) {
+                $this->fields['date_creation'] = $_SESSION["glpi_currenttime"];
+            }
+
+            // Auto set date_mod if exsist
+            if (isset($table_fields['date_mod']) && !isset($this->input['date_mod'])) {
+                $this->fields['date_mod'] = $_SESSION["glpi_currenttime"];
+            }
+
+            if ($this->checkUnicity(true, $options)) {
+                if ($this->addToDB() !== false) {
+                    $this->post_addItem();
+                    if ($this instanceof CacheableListInterface) {
+                        $this->invalidateListCache();
+                    }
+                    $this->addMessageOnAddAction();
+
+                    if ($this->dohistory && $history) {
+                        $changes = [
+                            0,
+                            '',
+                            '',
+                        ];
+                        Log::history(
+                            $this->fields["id"],
+                            $this->getType(),
+                            $changes,
+                            0,
+                            Log::HISTORY_CREATE_ITEM
+                        );
+                    }
+
+                    // Auto create infocoms
+                    if (
+                        isset($CFG_GLPI["auto_create_infocoms"]) && $CFG_GLPI["auto_create_infocoms"]
+                        && (!isset($input['clone']) || !$input['clone'])
+                        && Infocom::canApplyOn($this)
+                    ) {
+                        $ic = new Infocom();
+                        if (!$ic->getFromDBforDevice($this->getType(), $this->fields['id'])) {
+                            $ic->add(['itemtype' => $this->getType(),
+                                'items_id' => $this->fields['id']
+                            ]);
+                        }
+                    }
+
+                    // If itemtype is in infocomtype and if states_id field is filled
+                    // and item is not a template
+                    if (
+                        Infocom::canApplyOn($this)
+                        && isset($this->input['states_id'])
+                            && (!isset($this->input['is_template'])
+                                || !$this->input['is_template'])
+                    ) {
+                        //Check if we have to automatically fill dates
+                        Infocom::manageDateOnStatusChange($this);
+                    }
+                    Plugin::doHook(Hooks::ITEM_ADD, $this);
+
+                    // As add have succeeded, clean the old input value
+                    if (isset($this->input['_add'])) {
+                        $this->clearSavedInput();
+                    }
+                    return $this->fields['id'];
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    
 
     public function defineTabs($options = [])
     {

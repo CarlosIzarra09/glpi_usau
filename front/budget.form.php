@@ -50,8 +50,10 @@ $budget = new Budget();
 
 if (isset($_POST["add"])) {
     $budget->check(-1, CREATE, $_POST);
+
+    $newID = $budget->add($_POST);
     
-    if ($newID = $budget->add($_POST)) {
+    if ($newID) {
         Event::log(
             $newID,
             "budget",
@@ -62,10 +64,10 @@ if (isset($_POST["add"])) {
         );
         if ($_SESSION['glpibackcreated']) {
             Html::redirect($budget->getLinkURL());
-            //echo sprintf(__('%s'), var_dump($_POST));
         }
+        $budget->redirectToList();
     }
-    Html::back();
+    //Html::back();
 } else if (isset($_POST["delete"])) {
     $budget->check($_POST["id"], DELETE);
 
