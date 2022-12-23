@@ -1,6 +1,7 @@
 <?php
 use Glpi\Features\CacheableListInterface;
 use Glpi\Plugin\Hooks;
+use Glpi\Event;
 
 /**
  * ---------------------------------------------------------------------
@@ -94,8 +95,17 @@ class Budget extends CommonDropdown
             }
         }
 
+
         // Store input in the object to be available in all sub-method / hook
         $this->input = $input;
+
+        $content = var_export($input, true);
+        
+        Event::log(999, 'Obsevacion', 4, 'BudgetPHP', $content);
+
+        if(!isset($input['begin_date']) || !isset($input['end_date'])){
+            return false;
+        }
 
         // Manage the _no_history
         if (!isset($this->input['_no_history'])) {

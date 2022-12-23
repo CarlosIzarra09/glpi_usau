@@ -5591,7 +5591,7 @@ class CommonDBTM extends CommonGLPI
      *
      * @return void
      */
-    private function assetBusinessRules($condition)
+    public function assetBusinessRules($condition)
     {
         global $CFG_GLPI;
 
