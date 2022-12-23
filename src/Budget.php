@@ -103,9 +103,12 @@ class Budget extends CommonDropdown
         
         Event::log(999, 'Obsevacion', 4, 'BudgetPHP', $content);
 
-        if(empty(trim($input['begin_date'])) || empty(trim($input['end_date']))){
+        if(empty(trim($input['begin_date'])) || empty(trim($input['end_date'])) 
+        || empty(trim($input['value']))){
             return false;
         }
+
+
 
         // Manage the _no_history
         if (!isset($this->input['_no_history'])) {
