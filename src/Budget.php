@@ -99,9 +99,9 @@ class Budget extends CommonDropdown
         // Store input in the object to be available in all sub-method / hook
         $this->input = $input;
 
-        $content = var_export($input, true);
-        
-        Event::log(999, 'Obsevacion', 4, 'BudgetPHP', $content);
+        //Para mostrar el vardump del array, dirigirse a "administration->logs" en GLPI
+        //$content = var_export($input, true);
+        //Event::log(999, 'Obsevacion', 4, 'BudgetPHP', $content);
 
         if(empty(trim($input['begin_date'])) || empty(trim($input['end_date'])) 
         || empty(trim($input['value']))){
