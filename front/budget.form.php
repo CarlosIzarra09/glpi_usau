@@ -67,7 +67,7 @@ if (isset($_POST["add"])) {
         }
         $budget->redirectToList();
     }
-    //Html::back();
+    Html::back();
 } else if (isset($_POST["delete"])) {
     $budget->check($_POST["id"], DELETE);
 

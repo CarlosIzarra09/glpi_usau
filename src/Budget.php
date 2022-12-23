@@ -103,7 +103,7 @@ class Budget extends CommonDropdown
         
         Event::log(999, 'Obsevacion', 4, 'BudgetPHP', $content);
 
-        if(!isset($input['begin_date']) || !isset($input['end_date'])){
+        if(empty(trim($input['begin_date'])) || empty(trim($input['end_date']))){
             return false;
         }
 
