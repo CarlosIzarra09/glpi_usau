@@ -1,0 +1,61 @@
+name: Linux
+
+on:
+  push:
+    branches:
+      - master
+      - 'feature/*'
+      - 'fix/*'
+  pull_request:
+
+jobs:
+  ubuntu-latest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: [ '7.4', '8.0', '8.1' ]
+        coverage: [none]
+      fail-fast: false
+
+    name: PHP ${{ matrix.php-versions }} on ubuntu-latest
+
+    steps:
+      - name: PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          tools: composer
+          coverage: ${{ matrix.coverage }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install 3rd party deps
+        run: composer install --no-progress --no-interaction --ignore-platform-reqs
+
+      - name: Build hardware JSONs
+        run: |
+          bin/build_hw_jsons
+          rm data/*.json
+
+      - name: Schema lint
+        run: vendor/bin/jsonlint inventory.schema.json
+
+      - name: XML well formed
+        run: |
+          sudo apt-get install expat
+          xmlwf tests/data/*.xml
+
+      - name: PSR12
+        run: |
+          vendor/bin/phpcs --standard=PSR12 lib/php/*
+
+      - name: Conversions tests
+        run: for i in `ls tests/data/*.xml`; do ./bin/convert $i || exit 1; done
+
+      - name: Examples validation tests
+        run: for i in `ls examples/*.json`; do ./bin/validate $i || exit 1; done
+
+      - name: Unit tests
+        run: vendor/bin/atoum --no-cc -mcn 1 -bf tests/bootstrap.php -d tests/Glpi/
