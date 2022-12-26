@@ -30,7 +30,6 @@ phpunit.xml
 /public/build/
 /tests/web/error.log
 /inventory-vendors/*.json
-/locales/*.mo
 .atoum
 .composer.hash
 .composer-require-checker.config
