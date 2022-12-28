@@ -450,7 +450,9 @@ abstract class CommonITILCost extends CommonDBChild
 
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . __('Time cost') . "</td><td>";
-        echo "<input type='text' class='form-control' size='15' name='cost_time' value='" .
+        echo "<input type='text' class='form-control' size='15' name='cost_time' 
+            onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 46'    
+            value='" .
              Html::formatNumber($this->fields["cost_time"], true) . "'>";
         echo "</td>";
         $rowspan = 4;
@@ -462,14 +464,18 @@ abstract class CommonITILCost extends CommonDBChild
 
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . __('Fixed cost') . "</td><td>";
-        echo "<input type='text' class='form-control' size='15' name='cost_fixed' value='" .
+        echo "<input type='text' class='form-control' size='15' name='cost_fixed' 
+            onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 46'
+            value='" .
              Html::formatNumber($this->fields["cost_fixed"], true) . "'>";
         echo "</td>";
         echo "</tr>";
 
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . __('Material cost') . "</td><td>";
-        echo "<input type='text' class='form-control' size='15' name='cost_material' value='" .
+        echo "<input type='text' class='form-control' size='15' name='cost_material' 
+            onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 46'
+            value='" .
              Html::formatNumber($this->fields["cost_material"], true) . "'>";
         echo "</td>";
         echo "</tr>";
