@@ -5,7 +5,7 @@
 /config/local_define.php
 /tests/config_db*
 /tests/cache.php
-/marketplace/
+/marketplace/oauthimap/vendor/
 /plugins/
 /files/
 /.buildpath
