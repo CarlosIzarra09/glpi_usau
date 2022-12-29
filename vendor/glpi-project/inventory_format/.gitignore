@@ -1,5 +1,0 @@
-vendor/
-tests/code-coverage/
-data/*.json
-data/*.txt
-data/*.ids
