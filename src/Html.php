@@ -3851,7 +3851,7 @@ JS;
 
         $plugins = [
             'autoresize',
-            'code',
+            
             'directionality',
             'fullscreen',
             'link',
@@ -3906,7 +3906,7 @@ JS;
                // inline toolbar configuration
                menubar: false,
                toolbar: richtext_layout == 'classic'
-                  ? 'styles | bold italic | forecolor backcolor | bullist numlist outdent indent | emoticons table link image | code fullscreen'
+                  ? 'styles | bold italic | forecolor backcolor | bullist numlist outdent indent | emoticons table link image | fullscreen'
                   : false,
                quickbars_insert_toolbar: richtext_layout == 'inline'
                   ? 'emoticons quicktable quickimage quicklink | bullist numlist | outdent indent '
@@ -3914,7 +3914,7 @@ JS;
                quickbars_selection_toolbar: richtext_layout == 'inline'
                   ? 'bold italic | styles | forecolor backcolor '
                   : false,
-               contextmenu: 'copy paste | emoticons table image link | undo redo | code fullscreen',
+               contextmenu: 'copy paste | emoticons table image link | undo redo | fullscreen',
 
                // Content settings
                entity_encoding: 'raw',
