@@ -2,6 +2,7 @@
 use Glpi\Features\CacheableListInterface;
 use Glpi\Plugin\Hooks;
 use Glpi\Event;
+use PhpParser\Node\Stmt\Echo_;
 
 /**
  * ---------------------------------------------------------------------
@@ -335,13 +336,60 @@ class Budget extends CommonDropdown
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . __('Start date') . "</td>";
         echo "<td>";
-        Html::showDateField("begin_date", ['value' => $this->fields["begin_date"],'max' => '2032-12-31','min' => '2000-01-01']);
+
+
+        /*$jsOther = <<<JS
+      $(function(selectedDates, dateStr, instance) {
+        console.log(dateStr);
+      });
+      JS;*/
+
+        $jsOld = "console.log('Mi id es: '+instance.element.id)
+               console.log('Mi fecha minima es: '+instance.config._minDate)
+               console.log('Mi fecha maxima es: '+instance.config._maxDate)
+               console.log(instance)
+        ";
+
+       
+        $randBeginDate = mt_rand();
+        $randEndDate = mt_rand();
+
+        
+        $controlMinDate = "
+        const fpEndDate = document.querySelector('#showdate{$randEndDate}')._flatpickr
+        const newENDminDate = new Date(dateStr);
+        newENDminDate.setDate(newENDminDate.getDate() + 1);
+        fpEndDate.config.minDate = newENDminDate;
+        ";
+
+        $controlMaxDate = "
+        const fpBeginDate = document.querySelector('#showdate{$randBeginDate}')._flatpickr
+        const newBEGINmaxDate = new Date(dateStr);
+        
+        fpBeginDate.config.maxDate = newBEGINmaxDate;
+        ";
+
+        //newBEGINmaxDate.setDate(newBEGINmaxDate.getDate() - 1);
+
+        
+
+        Html::showDateField("begin_date", ['value' => $this->fields["begin_date"],
+        'max' => '2032-12-31',
+        'min' => '2000-01-01',
+        'rand' => $randBeginDate,
+        'on_change' => $controlMinDate]);
+
         echo "</td></tr>";
 
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . __('End date') . "</td>";
         echo "<td>";
-        Html::showDateField("end_date", ['value' => $this->fields["end_date"],'max' => '2032-12-31','min' => '2000-01-01']);
+        Html::showDateField("end_date", ['value' => $this->fields["end_date"],
+        'max' => '2032-12-31',
+        'min' => '2000-01-01',
+        'rand' => $randEndDate,
+        'on_change' => $controlMaxDate]);
+
         echo "</td></tr>";
 
         echo "<tr class='tab_bg_1'>";
