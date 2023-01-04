@@ -333,28 +333,27 @@ class Budget extends CommonDropdown
                       "<textarea class='form-control' name='comment' >" . $this->fields["comment"] . "</textarea>" .
                       "</td></tr>";
 
-        echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __('Start date') . "</td>";
-        echo "<td>";
+        
 
 
         /*$jsOther = <<<JS
-      $(function(selectedDates, dateStr, instance) {
+        $(function(selectedDates, dateStr, instance) {
         console.log(dateStr);
-      });
-      JS;*/
+        });
+        JS;*/
 
-        $jsOld = "console.log('Mi id es: '+instance.element.id)
+        /*$jsOld = "console.log('Mi id es: '+instance.element.id)
                console.log('Mi fecha minima es: '+instance.config._minDate)
                console.log('Mi fecha maxima es: '+instance.config._maxDate)
                console.log(instance)
-        ";
+        ";*/
 
-       
+        //DATE FIELDS
         $randBeginDate = mt_rand();
         $randEndDate = mt_rand();
 
-        
+        //Controlamos la fecha minima que podrá seleccionar el EndDatefield cuando se
+        //asigna fecha al BeginDatefield
         $controlMinDate = "
         const fpEndDate = document.querySelector('#showdate{$randEndDate}')._flatpickr
         const newENDminDate = new Date(dateStr);
@@ -362,25 +361,24 @@ class Budget extends CommonDropdown
         fpEndDate.config.minDate = newENDminDate;
         ";
 
+        //Controlamos la fecha máxima que podrá seleccionar el BeginDatefield cuando se
+        //asigna fecha al EndDatefield
         $controlMaxDate = "
         const fpBeginDate = document.querySelector('#showdate{$randBeginDate}')._flatpickr
         const newBEGINmaxDate = new Date(dateStr);
-        
         fpBeginDate.config.maxDate = newBEGINmaxDate;
         ";
-
-        //newBEGINmaxDate.setDate(newBEGINmaxDate.getDate() - 1);
-
+       
         
-
+        echo "<tr class='tab_bg_1'>";
+        echo "<td>" . __('Start date') . "</td>";
+        echo "<td>";
         Html::showDateField("begin_date", ['value' => $this->fields["begin_date"],
         'max' => '2032-12-31',
         'min' => '2000-01-01',
         'rand' => $randBeginDate,
         'on_change' => $controlMinDate]);
-
         echo "</td></tr>";
-
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . __('End date') . "</td>";
         echo "<td>";
@@ -389,9 +387,7 @@ class Budget extends CommonDropdown
         'min' => '2000-01-01',
         'rand' => $randEndDate,
         'on_change' => $controlMaxDate]);
-
         echo "</td></tr>";
-
         echo "<tr class='tab_bg_1'>";
         echo "<td>" . Location::getTypeName(1) . "</td>";
         echo "<td>";
